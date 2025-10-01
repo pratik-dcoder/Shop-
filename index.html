@@ -1,173 +1,252 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop - Your Online Store</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #232f3e;
-            color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header .logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #ff9900;
-        }
-        header .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-        nav ul li {
-            margin-left: 20px;
-        }
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .hero {
-            background-color: #ff9900;
-            color: #fff;
-            text-align: center;
-            padding: 50px 20px;
-        }
-        .hero h1 {
-            margin: 0;
-            font-size: 48px;
-        }
-        .hero p {
-            font-size: 18px;
-        }
-        .products {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 20px;
-        }
-        .product-card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 22%;
-            margin: 10px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .product-card img {
-            max-width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .product-card h3 {
-            margin: 10px 0;
-            font-size: 18px;
-        }
-        .product-card p {
-            color: #888;
-            font-size: 14px;
-        }
-        .product-card .price {
-            color: #ff9900;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .product-card button {
-            background-color: #ff9900;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        footer {
-            background-color: #232f3e;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="logo">
-            <img src="logo.jpg" alt="Shop Logo">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Products</a></li>
-                <li><a href="#">Deals</a></li>
-                <li><a href="#">Cart</a></li>
-                <li><a href="#">Account</a></li>
-            </ul>
-        </nav>
-    </header>
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
+import QRCode from "qrcode.react";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, doc, getDoc, getDocs, query, orderBy, serverTimestamp } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Welcome to the hottest shop</h1>
-        <p>Your one-stop away from nudy girls to play hardly.</p>
-    </section>
+// ----- REPLACE THIS WITH YOUR FIREBASE CONFIG -----
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+};
+// -------------------------------------------------
 
-    <!-- Product Listings -->
-    <section class="products">
-        <div class="product-card">
-            <a href="product1.html"><img src="https://i.ibb.co/rRvzBvk1/8b0afc0b9e70.jpg" alt="Product 1"></a>
-            <h3>Russian</h3>
-            <p>Description of Product 1.</p>
-            <p class="price">Rs5999</p>
-            <button>Add to Cart</button>
-        </div>
-        <div class="product-card">
-            <a href="product2.html"><img src="https://i.ibb.co/WpVSfV1F/9cbf3a1dc903.jpg" alt="Product 2"></a>
-            <h3>American</h3>
-            <p>Description of Product 2.</p>
-            <p class="price">Rs4999</p>
-            <button>Add to Cart</button>
-        </div>
-        <div class="product-card">
-            <a href="product3.html"><img src="https://i.ibb.co/C5NxpKRV/5069b52dcef0.jpg" alt="Product 3"></a>
-            <h3>Pakistani</h3>
-            <p>Description of Product 3.</p>
-            <p class="price">Rs999</p>
-            <button>Add to Cart</button>
-        </div>
-        <div class="product-card">
-            <a href="product4.html"><img src="https://i.ibb.co/tPHQq7yK/95613e1ee48d.jpg" alt="Product 4"></a>
-            <h3>Korean</h3>
-            <p>Description of Product 4.</p>
-            <p class="price">Rs9999</p>
-            <button>Add to Cart</button>
-        </div>
-    </section>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2023 Shop. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+export default function App() {
+  return (
+    <Router>
+      <div className="min-h-screen bg-gray-50 text-gray-900">
+        <header className="bg-white shadow-sm">
+          <div className="max-w-4xl mx-auto p-4 flex items-center justify-between">
+            <h1 className="text-xl font-semibold">Dusshera Photo QR Share</h1>
+            <nav className="flex gap-3 items-center">
+              <Link to="/" className="text-sm hover:underline">Home</Link>
+              <Link to="/admin" className="text-sm hover:underline">Admin</Link>
+              <Link to="/gallery" className="text-sm hover:underline">Gallery</Link>
+            </nav>
+          </div>
+        </header>
+
+        <main className="max-w-4xl mx-auto p-6">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/view/:id" element={<ViewImage />} />
+            <Route path="/gallery" element={<Gallery />} />
+          </Routes>
+        </main>
+
+        <footer className="text-center p-6 text-sm text-gray-500">
+          Built for Dusshera events — replace Firebase config before use.
+        </footer>
+      </div>
+    </Router>
+  );
+}
+
+function Home() {
+  return (
+    <div className="rounded-lg p-6 bg-white shadow">
+      <h2 className="text-2xl font-bold mb-2">Welcome</h2>
+      <p className="mb-4">Scan a printed QR at the event or visit <span className="font-mono">/view/&lt;id&gt;</span> to see a photo.</p>
+      <div className="flex gap-3">
+        <Link to="/admin" className="px-4 py-2 bg-blue-600 text-white rounded">Admin Upload</Link>
+        <Link to="/gallery" className="px-4 py-2 bg-gray-200 rounded">View Gallery</Link>
+      </div>
+    </div>
+  );
+}
+
+function Admin() {
+  const [file, setFile] = useState(null);
+  const [title, setTitle] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [lastRecord, setLastRecord] = useState(null);
+  const [gallery, setGallery] = useState([]);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchRecent() {
+      const q = query(collection(db, "photos"), orderBy("createdAt", "desc"));
+      const snaps = await getDocs(q);
+      const items = snaps.docs.map((d) => ({ id: d.id, ...d.data() }));
+      setGallery(items);
+    }
+    fetchRecent();
+  }, []);
+
+  async function handleUpload(e) {
+    e.preventDefault();
+    if (!file) return alert("Choose an image file");
+
+    setUploading(true);
+    try {
+      const storageRef = ref(storage, `event-photos/${Date.now()}_${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on("state_changed",
+        () => {},
+        (err) => {
+          console.error(err);
+          setUploading(false);
+          alert("Upload failed");
+        },
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          const docRef = await addDoc(collection(db, "photos"), {
+            title: title || "Mata Rani",
+            imageUrl: url,
+            fileName: file.name,
+            createdAt: serverTimestamp(),
+          });
+          setLastRecord({ id: docRef.id, imageUrl: url });
+          setTitle("");
+          setFile(null);
+          setUploading(false);
+        }
+      );
+    } catch (err) {
+      console.error(err);
+      setUploading(false);
+      alert("Something went wrong");
+    }
+  }
+
+  return (
+    <div className="rounded-lg p-6 bg-white shadow space-y-6">
+      <h2 className="text-xl font-semibold">Admin — Upload Photo</h2>
+
+      <form onSubmit={handleUpload} className="space-y-4">
+        <div>
+          <label className="block text-sm">Title (optional)</label>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Mata Rani, Mandir name, etc." className="mt-1 w-full border rounded p-2" />
+        </div>
+
+        <div>
+          <label className="block text-sm">Choose image</label>
+          <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="mt-1" />
+        </div>
+
+        <div className="flex gap-3">
+          <button type="submit" disabled={uploading} className="px-4 py-2 bg-green-600 text-white rounded">
+            {uploading ? "Uploading..." : "Upload & Generate QR"}
+          </button>
+          <button type="button" onClick={() => navigate('/gallery')} className="px-4 py-2 bg-gray-200 rounded">Open Gallery</button>
+        </div>
+      </form>
+
+      {lastRecord && (
+        <div className="p-4 border rounded">
+          <h3 className="font-medium">Upload created</h3>
+          <p className="text-sm">ID: <span className="font-mono">{lastRecord.id}</span></p>
+          <div className="mt-2 flex items-start gap-6">
+            <img src={lastRecord.imageUrl} alt="preview" className="w-28 h-28 object-cover rounded" />
+            <div>
+              <p className="text-sm mb-2">QR that attendees can scan:</p>
+              <div className="bg-white p-2 inline-block">
+                <QRCode value={`${window.location.origin}/view/${lastRecord.id}`} size={160} />
+              </div>
+            </div>
+          </div>
+          <p className="mt-2 text-xs text-gray-600">Download/print this QR and paste it near the crowd. Scanning opens the image directly.</p>
+        </div>
+      )}
+
+      <section>
+        <h3 className="font-medium mb-2">Recent uploads</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {gallery.map((g) => (
+            <div key={g.id} className="border rounded p-2 bg-gray-50">
+              <img src={g.imageUrl} alt={g.title} className="w-full h-32 object-cover rounded"/>
+              <div className="mt-2 text-xs">
+                <div className="font-medium truncate">{g.title}</div>
+                <div className="flex items-center justify-between mt-1">
+                  <Link to={`/view/${g.id}`} className="text-blue-600 text-xs">Open</Link>
+                  <QRCode value={`${window.location.origin}/view/${g.id}`} size={80} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function ViewImage() {
+  const { id } = useParams();
+  const [record, setRecord] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const docRef = doc(db, "photos", id);
+        const snap = await getDoc(docRef);
+        if (!snap.exists()) {
+          setRecord(null);
+        } else {
+          setRecord({ id: snap.id, ...snap.data() });
+        }
+      } catch (err) {
+        console.error(err);
+        setRecord(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [id]);
+
+  if (loading) return <div className="rounded-lg p-6 bg-white shadow">Loading…</div>;
+  if (!record) return <div className="rounded-lg p-6 bg-white shadow">Image not found or removed.</div>;
+
+  return (
+    <div className="rounded-lg p-6 bg-white shadow text-center">
+      <h2 className="text-xl font-semibold mb-4">{record.title || 'Photo'}</h2>
+      <img src={record.imageUrl} alt={record.title} className="mx-auto max-w-full h-auto rounded shadow" />
+      <p className="mt-3 text-sm text-gray-600">Show this to the person who scanned the QR or let them save the image.</p>
+    </div>
+  );
+}
+
+function Gallery() {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const q = query(collection(db, "photos"), orderBy("createdAt", "desc"));
+      const snaps = await getDocs(q);
+      const items = snaps.docs.map((d) => ({ id: d.id, ...d.data() }));
+      setList(items);
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  if (loading) return <div className="rounded-lg p-6 bg-white shadow">Loading gallery…</div>;
+
+  return (
+    <div className="rounded-lg p-6 bg-white shadow">
+      <h2 className="text-lg font-semibold mb-4">Gallery</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {list.map((it) => (
+          <Link key={it.id} to={`/view/${it.id}`} className="block border rounded overflow-hidden bg-gray-50">
+            <img src={it.imageUrl} alt={it.title} className="w-full h-32 object-cover" />
+            <div className="p-2 text-xs">{it.title}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
